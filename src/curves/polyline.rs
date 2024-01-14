@@ -15,13 +15,24 @@ impl<T> PolyLine<T>
 where
     T: Copy + ToPrimitive + NumOps,
 {
-    pub fn new(points: Vec<impl Into<Point2D<T>>>) -> Self {
+    pub fn new(points: impl IntoIterator<Item = impl Into<Point2D<T>>>) -> Self {
         let points: Vec<Point2D<T>> = points.into_iter().map(|v| v.into()).collect();
         let length = points
             .array_windows::<2>()
             .map(|[p1, p2]| (*p2 - *p1).square_length().to_f64().expect("WTF").sqrt())
             .sum();
         Self { points, length }
+    }
+}
+
+impl<T, U, V> From<U> for PolyLine<T>
+where
+    T: Copy + ToPrimitive + NumOps,
+    U: IntoIterator<Item = V>,
+    V: Into<Point2D<T>>,
+{
+    fn from(value: U) -> Self {
+        Self::new(value)
     }
 }
 

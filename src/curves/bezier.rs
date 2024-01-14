@@ -8,6 +8,12 @@ use crate::curves::Curve;
 #[derive(Debug, Clone)]
 pub struct CubicBezier<T: Copy + ToPrimitive>([Point2D<T>; 4]);
 
+impl<T: Copy + ToPrimitive, U: Into<Point2D<T>>> From<[U; 4]> for CubicBezier<T> {
+    fn from(value: [U; 4]) -> Self {
+        CubicBezier(value.map(|v| v.into()))
+    }
+}
+
 impl<T> CubicBezier<T>
 where
     T: Copy + ToPrimitive,
@@ -20,7 +26,6 @@ where
     ) -> Self {
         Self([p0.into(), p1.into(), p2.into(), p3.into()])
     }
-
 }
 
 impl<T> Curve for CubicBezier<T>
